@@ -23,7 +23,7 @@ interface MarkmapHooksProps {
 
 export default function MarkmapHooks({ markdown }: MarkmapHooksProps) {
   const refSvg = useRef<SVGSVGElement>(null);
-  const refMm = useRef<Markmap>();
+  const refMm = useRef<Markmap | null>(null);
   const [currentMarkdown, setCurrentMarkdown] = useState(markdown);
   const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -73,9 +73,6 @@ export default function MarkmapHooks({ markdown }: MarkmapHooksProps) {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  // Keep ref in sync so the stable click handler always calls latest fetchResources
-  fetchResourcesRef.current = fetchResources;
 
   // Node click → resource panel
   useEffect(() => {
@@ -130,6 +127,9 @@ export default function MarkmapHooks({ markdown }: MarkmapHooksProps) {
       setResourcesLoading(false);
     }
   };
+
+  // Keep ref in sync so the stable click handler always calls latest fetchResources
+  fetchResourcesRef.current = fetchResources;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
